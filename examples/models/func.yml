@@ -1,0 +1,11 @@
+first:
+  name: fnproject/test
+  version: 0.0.1
+  path: /test
+  type: sync
+  timeout: 60
+  idle_timeout: 200
+  memory: 1024
+  config:
+    a: 127
+    B: "B"
