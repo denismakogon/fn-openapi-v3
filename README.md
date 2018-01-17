@@ -22,15 +22,7 @@ Function spec example
 
 ```yaml
 version: 0.0.1
-
-application:
-  name: app
-  config:
-    c: 123
-    10: "helloworld"
-
 description: Functions spec that describes Fn-powered serverless application
-
 functions:
   createUser:
     handler: handler.create
@@ -42,7 +34,7 @@ functions:
             summary: Create User
             description: Creates a user and then sends a generated password email
             requestBody:
-              schema: ${file(models/PutDocumentRequest.json)}
+              schema: ${file(models/request.json)}
             parameters:
               - name: username
                 description: The username for a user to create
@@ -65,12 +57,12 @@ functions:
                 description: create a user
                 content:
                   application/json:
-                    schema: ${file(models/PutDocumentResponse.json)}
+                    schema: ${file(models/request.json)}
               500:
                 description: error
                 content:
                   application/json:
-                    schema: ${file(models/ErrorResponse.json)}
+                    schema: ${file(models/error.json)}
 ```
 This sample you can find [here](examples/fn.yml)
 
