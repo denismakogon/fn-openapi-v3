@@ -24,7 +24,6 @@ type Fn struct {
 	Functions   map[string]Function `json:"functions,omitempty" yaml:"functions,omitempty"`
 	Version     string              `json:"version" yaml:"version"`
 	Description string              `json:"description" yaml:"description"`
-	Application Application         `json:"application" yaml:"application"`
 }
 
 type Application struct {
@@ -33,11 +32,7 @@ type Application struct {
 }
 
 func (fn *Fn) Unmarshal(content []byte, w io.Writer) error {
-	err := yaml.Unmarshal(content, &fn)
-	if err != nil {
-		return err
-	}
-	return nil
+	return yaml.Unmarshal(content, &fn)
 }
 
 func (fn *Fn) Marshal(w io.Writer) error {

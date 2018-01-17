@@ -2,8 +2,10 @@ package models
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/go-openapi/spec"
 	"io"
+	"path/filepath"
 )
 
 type OpenAPISpec struct {
@@ -31,7 +33,7 @@ type OperationProperties struct {
 	Summary     string                `json:"summary,omitempty" yaml:"summary,omitempty"`
 	ID          string                `json:"operationId,omitempty" yaml:"operationId,omitempty"`
 	Security    []map[string][]string `json:"security,omitempty" yaml:"security,omitempty"`
-	Parameters  []spec.Parameter      `json:"parameters,omitempty" yaml:"parameters,omitempty"`
+	Parameters  []Parameter           `json:"parameters,omitempty" yaml:"parameters,omitempty"`
 	Responses   map[int]Response      `json:"responses,omitempty" yaml:"responses,omitempty"`
 }
 
@@ -65,9 +67,13 @@ func (oai *OpenAPISpec) FromFnSpec(fnAPIURL string, fn *Fn) error {
 			// fnFormat
 			for _, event := range typedEvents {
 				pathProps := PathItemProps{}
-				var params []spec.Parameter
+				var params []Parameter
+				restPath := "/"
 				for _, p := range event.Documentation.Parameters {
-					params = append(params, spec.Parameter{ParamProps: p})
+					params = append(params, p)
+					if p.In == "path" {
+						restPath = filepath.Join(restPath, fmt.Sprintf("{%v}", p.Name))
+					}
 				}
 				//event.Documentation.MethodResponses
 				op := OperationProperties{
@@ -77,6 +83,7 @@ func (oai *OpenAPISpec) FromFnSpec(fnAPIURL string, fn *Fn) error {
 					Parameters:  params,
 					Responses:   event.Documentation.Responses,
 				}
+
 				switch event.Method {
 				case "get":
 					pathProps.Get = &op
@@ -94,7 +101,9 @@ func (oai *OpenAPISpec) FromFnSpec(fnAPIURL string, fn *Fn) error {
 					pathProps.Head = &op
 				}
 				//TODO(denimakogon): join /r appName and route
-				oai.Paths[event.Fn.Path] = pathProps
+				path := fmt.Sprintf("/r/%v%v%v",
+					event.Fn.Application.Name, event.Fn.Path, restPath)
+				oai.Paths[path] = pathProps
 			}
 		}
 	}

@@ -9,3 +9,8 @@ first:
   config:
     a: 127
     B: "B"
+  application:
+    name: app
+    config:
+      c: 123
+      '10': "helloworld"

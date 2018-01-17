@@ -16,7 +16,6 @@ func (schema *Schema) UnmarshalYAML(unmarshal func(interface{}) error) error {
 	if err != nil {
 		return unmarshalReferenceFile(unmarshal, schema)
 	}
-	err = mapstructure.Decode(s, schema)
 
-	return nil
+	return mapstructure.Decode(s, schema)
 }
